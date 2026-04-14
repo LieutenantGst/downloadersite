@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Social Downloader</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #6b46c1, #e53e3e);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+    }
+    .container {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+      max-width: 520px;
+      width: 90%;
+      text-align: center;
+    }
+    h1 {
+      margin: 0 0 8px 0;
+      color: #4c51bf;
+      font-size: 28px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+    input {
+      width: 100%;
+      padding: 16px;
+      font-size: 17px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+    button {
+      background: linear-gradient(to right, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 16px 40px;
+      font-size: 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: bold;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .platforms {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 25px 0;
+    }
+    .platform {
+      background: #f1f5f9;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 14px;
+      color: #555;
+    }
+    .result {
+      margin-top: 25px;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 12px;
+      display: none;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌐 All Social Downloader</h1>
+    <p class="subtitle">YouTube • TikTok • Instagram • Facebook • Twitter/X • and 1000+ more</p>
+    
+    <div class="platforms">
+      <div class="platform">YouTube</div>
+      <div class="platform">TikTok</div>
+      <div class="platform">Instagram</div>
+      <div class="platform">Facebook</div>
+      <div class="platform">Twitter / X</div>
+    </div>
+
+    <input type="text" id="urlInput" placeholder="Paste any video link here..." />
+    <button onclick="handleDownload()">Download Video</button>
+
+    <div class="result" id="result">
+      <strong id="status"></strong>
+    </div>
+
+    <p style="font-size: 13px; color: #777; margin-top: 30px;">
+      This is a clean frontend.<br>
+      For full support across all platforms, you need a small backend (see below).
+    </p>
+  </div>
+
+  <script>
+    function handleDownload() {
+      const url = document.getElementById('urlInput').value.trim();
+      const result = document.getElementById('result');
+      const status = document.getElementById('status');
+
+      if (!url) {
+        status.innerHTML = "❌ Please paste a valid link!";
+        result.style.display = "block";
+        return;
+      }
+
+      status.innerHTML = `
+        ✅ Link received!<br><br>
+        <strong>Recommended free tools that actually work in 2026:</strong><br><br>
+        • <a href="https://cobalt.tools" target="_blank">cobalt.tools</a> (best & cleanest)<br>
+        • <a href="https://yt-dlp.org" target="_blank">Use yt-dlp locally</a> (most powerful)<br>
+        • Or host your own downloader below<br><br>
+        Paste your link into one of the above sites for instant download.
+      `;
+      result.style.display = "block";
+    }
+
+    // Press Enter to download
+    document.getElementById('urlInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleDownload();
+    });
+  </script>
+</body>
+</html>
