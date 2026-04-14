@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All Social Downloader</title>
+  <title>Cobalt Downloader</title>
   <style>
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
@@ -32,7 +32,7 @@
     }
     .subtitle {
       color: #666;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
     input {
       width: 100%;
@@ -57,19 +57,9 @@
     button:hover {
       opacity: 0.9;
     }
-    .platforms {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin: 25px 0;
-    }
-    .platform {
-      background: #f1f5f9;
-      padding: 8px 16px;
-      border-radius: 30px;
-      font-size: 14px;
-      color: #555;
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
     .result {
       margin-top: 25px;
@@ -77,14 +67,34 @@
       background: #f8fafc;
       border-radius: 12px;
       display: none;
-      text-align: left;
+    }
+    .download-btn {
+      background: #10b981;
+      margin-top: 15px;
+      width: auto;
+      padding: 12px 25px;
+      display: inline-block;
+    }
+    .platforms {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .platform {
+      background: #f1f5f9;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      color: #555;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🌐 All Social Downloader</h1>
-    <p class="subtitle">YouTube • TikTok • Instagram • Facebook • Twitter/X • and 1000+ more</p>
+    <h1>🔗 Cobalt Downloader</h1>
+    <p class="subtitle">Fast & clean downloads from YouTube, TikTok, Instagram, Facebook, X, and more</p>
     
     <div class="platforms">
       <div class="platform">YouTube</div>
@@ -94,24 +104,27 @@
       <div class="platform">Twitter / X</div>
     </div>
 
-    <input type="text" id="urlInput" placeholder="Paste any video link here..." />
-    <button onclick="handleDownload()">Download Video</button>
+    <input type="text" id="urlInput" placeholder="Paste video link here..." />
+    <button id="downloadBtn" onclick="startDownload()">Download with Cobalt</button>
 
     <div class="result" id="result">
-      <strong id="status"></strong>
+      <p id="status"></p>
+      <a id="directLink" href="#" target="_blank" class="download-btn" style="color:white; text-decoration:none;">⬇️ Download File</a>
     </div>
 
     <p style="font-size: 13px; color: #777; margin-top: 30px;">
-      This is a clean frontend.<br>
-      For full support across all platforms, you need a small backend (see below).
+      Powered by <a href="https://cobalt.tools" target="_blank" style="color:#667eea;">cobalt.tools</a><br>
+      No ads • No trackers • High quality where possible
     </p>
   </div>
 
   <script>
-    function handleDownload() {
+    async function startDownload() {
       const url = document.getElementById('urlInput').value.trim();
+      const btn = document.getElementById('downloadBtn');
       const result = document.getElementById('result');
       const status = document.getElementById('status');
+      const directLink = document.getElementById('directLink');
 
       if (!url) {
         status.innerHTML = "❌ Please paste a valid link!";
@@ -119,20 +132,58 @@
         return;
       }
 
-      status.innerHTML = `
-        ✅ Link received!<br><br>
-        <strong>Recommended free tools that actually work in 2026:</strong><br><br>
-        • <a href="https://cobalt.tools" target="_blank">cobalt.tools</a> (best & cleanest)<br>
-        • <a href="https://yt-dlp.org" target="_blank">Use yt-dlp locally</a> (most powerful)<br>
-        • Or host your own downloader below<br><br>
-        Paste your link into one of the above sites for instant download.
-      `;
+      btn.disabled = true;
+      btn.textContent = "Processing with Cobalt...";
+      status.innerHTML = "⏳ Sending to Cobalt...";
       result.style.display = "block";
+
+      try {
+        const response = await fetch('https://api.cobalt.tools/api/json', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            url: url,
+            // Optional nice defaults (you can customize):
+            isAudioOnly: false,
+            filenameStyle: "pretty",
+            // You can add more options like: dubLang, etc. See Cobalt docs if needed
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.status === "stream" || data.status === "redirect") {
+          // Direct download link
+          const downloadUrl = data.url;
+          directLink.href = downloadUrl;
+          directLink.style.display = "inline-block";
+          status.innerHTML = `✅ Ready! Click below to download.<br><small>${data.text || ''}</small>`;
+          
+          // Auto start download
+          setTimeout(() => {
+            window.open(downloadUrl, '_blank');
+          }, 800);
+
+        } else if (data.status === "error") {
+          status.innerHTML = `❌ Error: ${data.text || 'Something went wrong with Cobalt'}`;
+        } else {
+          status.innerHTML = "⚠️ Unexpected response from Cobalt. Try again or use cobalt.tools directly.";
+        }
+      } catch (err) {
+        status.innerHTML = "❌ Failed to connect to Cobalt.<br>Try using <a href='https://cobalt.tools' target='_blank'>cobalt.tools</a> directly.";
+        console.error(err);
+      }
+
+      btn.disabled = false;
+      btn.textContent = "Download with Cobalt";
     }
 
-    // Press Enter to download
-    document.getElementById('urlInput').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handleDownload();
+    // Allow pressing Enter
+    document.getElementById('urlInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') startDownload();
     });
   </script>
 </body>
